@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventSpeak - Pendaftaran Pemateri</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>EventSpeak</h1>
+<p class="subtitle">Platform Informasi Webinar dan Bootcamp</p>
+
+<div class="card">
+
+<h2>Form Pendaftaran Pemateri</h2>
+
+<form id="formPemateri" onsubmit="return tambahData()">
+
+<div class="form-group">
+<label>Nama Lengkap</label>
+<input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+</div>
+
+<div class="form-group">
+<label>Email</label>
+<input type="email" id="email" placeholder="Masukkan email" required>
+</div>
+
+<div class="form-group">
+<label>Bidang Keahlian</label>
+<input type="text" id="keahlian" placeholder="Contoh: Web Development" required>
+</div>
+
+<div class="form-group">
+<label>Topik yang Diajarkan</label>
+<input type="text" id="topik" placeholder="Contoh: React untuk Pemula" required>
+</div>
+
+<div class="form-group">
+<label>Pengalaman Mengajar</label>
+<input type="text" id="pengalaman" placeholder="Contoh: 3 tahun" required>
+</div>
+
+<div class="form-group">
+<label>Upload Foto</label>
+<input type="file" id="foto" accept="image/*">
+</div>
+
+<div class="form-group">
+<label>Jenis Event</label>
+
+<div class="radio-group">
+<label><input type="radio" name="event" value="Webinar" required> Webinar</label>
+<label><input type="radio" name="event" value="Bootcamp"> Bootcamp</label>
+</div>
+
+</div>
+
+<button type="submit" class="btn-submit">Daftar Pemateri</button>
+
+</form>
+
+</div>
+
+<div class="table-card">
+
+<h2>Daftar Pemateri</h2>
+
+<table id="tabelPemateri">
+
+<thead>
+<tr>
+<th>Foto</th>
+<th>Nama</th>
+<th>Email</th>
+<th>Keahlian</th>
+<th>Topik</th>
+<th>Pengalaman</th>
+<th>Event</th>
+<th>Aksi</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let indexEdit = -1;
+
+function tambahData(){
+
+let nama = document.getElementById("nama").value;
+let email = document.getElementById("email").value;
+let polaEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(!polaEmail.test(email)){
+alert("Email tidak valid!");
+return false;
+}
+
+let keahlian = document.getElementById("keahlian").value;
+let topik = document.getElementById("topik").value;
+let pengalaman = document.getElementById("pengalaman").value;
+
+let event = document.querySelector('input[name="event"]:checked').value;
+
+let fotoInput = document.getElementById("foto");
+let fotoFile = fotoInput.files[0];
+let fotoURL = "";
+
+if(fotoFile){
+fotoURL = URL.createObjectURL(fotoFile);
+}
+
+let tabel = document.querySelector("#tabelPemateri tbody");
+
+if(indexEdit === -1){
+
+let baris = tabel.insertRow();
+
+baris.insertCell(0).innerHTML = fotoURL ? `<img src="${fotoURL}" width="50">` : "-";
+baris.insertCell(1).innerHTML = nama;
+baris.insertCell(2).innerHTML = email;
+baris.insertCell(3).innerHTML = keahlian;
+baris.insertCell(4).innerHTML = topik;
+baris.insertCell(5).innerHTML = pengalaman;
+baris.insertCell(6).innerHTML = event;
+
+baris.insertCell(7).innerHTML =
+`<button class="btn-edit" onclick="editData(this)">Edit</button>
+<button class="btn-delete" onclick="hapusData(this)">Hapus</button>`;
+
+}
+else{
+
+let baris = tabel.rows[indexEdit];
+
+if(fotoURL !== ""){
+baris.cells[0].innerHTML = `<img src="${fotoURL}" width="50">`;
+}
+
+baris.cells[1].innerHTML = nama;
+baris.cells[2].innerHTML = email;
+baris.cells[3].innerHTML = keahlian;
+baris.cells[4].innerHTML = topik;
+baris.cells[5].innerHTML = pengalaman;
+baris.cells[6].innerHTML = event;
+
+indexEdit = -1;
+
+}
+
+document.getElementById("formPemateri").reset();
+
+return false;
+
+}
+
+function hapusData(btn){
+
+if(confirm("Yakin ingin menghapus data?")){
+let baris = btn.parentNode.parentNode;
+baris.remove();
+}
+
+}
+
+function editData(btn){
+
+let baris = btn.parentNode.parentNode;
+
+indexEdit = baris.rowIndex - 1;
+
+document.getElementById("nama").value = baris.cells[1].innerHTML;
+document.getElementById("email").value = baris.cells[2].innerHTML;
+document.getElementById("keahlian").value = baris.cells[3].innerHTML;
+document.getElementById("topik").value = baris.cells[4].innerHTML;
+document.getElementById("pengalaman").value = baris.cells[5].innerHTML;
+
+let event = baris.cells[6].innerHTML;
+
+document.querySelector(`input[name="event"][value="${event}"]`).checked = true;
+
+}
+
+</script>
+
+</body>
+</html>
